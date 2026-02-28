@@ -64,25 +64,24 @@ function Board({ winnerLine, squares, handleGame, turn }) {
 }
 
 export default function Game() {
-  const [squaresList, setSquaresList] = useState([Array(9).fill(null)])
-  const [turn, setTurn] = useState('X')
-  const [currentMove, setCurrentMove] = useState(0)
-  const [winner, setWinner] = useState(null)
-  const [winnerLine, setWinnerLine] = useState([])
+  const [squaresList, setSquaresList] = useState([Array(9).fill(null)]);
+  const [currentMove, setCurrentMove] = useState(0);
+  // Derive everything from the current move
+  const currentSquares = squaresList[squaresList.length - 1];
+  const result = getWinner(currentSquares);
+  const winner = result ? result[0] : (currentMove === 9 ? 'Draw' : null);
+  const winnerLine = result ? result[1] : [];
+  const turn = currentMove % 2 === 0 ? 'X' : 'O';
 
   function handleGame(nextSquares) {
     setSquaresList([...squaresList, nextSquares])
-    setTurn(turn === 'X' ? 'O' : 'X')
     setCurrentMove(currentMove + 1)
 
     const result = getWinner(nextSquares); // Store result first
 
     if (result) {
       const [winnerName, line] = result;
-      setWinner(winnerName);
-      setWinnerLine(line);
     } else if (currentMove === 8) {
-      setWinner('Draw');
     }
   }
 
@@ -90,7 +89,6 @@ export default function Game() {
 
   function jumpToMove(move) {
     setSquaresList(squaresList.slice(0, move + 1))
-    setTurn(move % 2 === 0 ? 'X' : 'O')
     setCurrentMove(move)
   }
 
